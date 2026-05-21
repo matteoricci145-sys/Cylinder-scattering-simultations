@@ -44,7 +44,7 @@ from sionna.rt import load_scene, Transmitter, Receiver, PlanarArray, Camera
 
 dtype = tf.complex128
 rdtype = tf.float64
-nu = 12   
+nu = 8   
 
 scene = load_scene(f"./cylinder_{nu}/cylinder_{nu}.xml", dtype)
 
