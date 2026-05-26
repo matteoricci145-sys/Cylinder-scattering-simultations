@@ -44,9 +44,7 @@ from sionna.rt import load_scene, Transmitter, Receiver, PlanarArray, Camera
 
 dtype = tf.complex128
 rdtype = tf.float64
-nu = 8   
 
-scene = load_scene(f"./cylinder_{nu}/cylinder_{nu}.xml", dtype)
 
 fc = 2e9  # Se cambio la frequenza il cylinder radio diventa 12.8 / 2 per lamda giusto ??????
 lamda = 3e8 / fc
@@ -55,11 +53,17 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
+cylinder_radius_lamda = 2*12.8 # METTI IL TRASMETTIORE PIU LONTANO !!!!!!
+nu = 12
+
+cylinder_radius = cylinder_radius_lamda * lamda
+print(f"cylinder_radius: {cylinder_radius}")
+
+scene = load_scene(f"./cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+
 scene.frequency = fc
 scene.synthetic_array = True
 
-cylinder_radius = 12.8 * lamda # It's the diameter !!!
-print(f"cylinder_radius: {cylinder_radius}")
 
 #================================ SETTING RX and TX =========================================#
 
@@ -84,7 +88,9 @@ scene.rx_array = PlanarArray(num_rows=1,
 
 # =============================== PLACING TX ================================================== #
 
-tx_dist = 100.0
+
+D = cylinder_radius
+tx_dist = 2*(D**2)/lamda # TX must be in Frahofer zone
 
 source_point = np.array([tx_dist, 0.0, 0.0])
 
@@ -137,7 +143,7 @@ for circle_radius_i in circle_radius:
     print("\n\n=== ELETTROMAGNETIC PARAMETERS ===")
 
     r = circle_radius_i-cylinder_radius
-    D = cylinder_radius
+ 
     
     #print(f"circle_of_recievers_radius: {circle_radius_i}")
     print(f"Distance from the cylinder: {r}")

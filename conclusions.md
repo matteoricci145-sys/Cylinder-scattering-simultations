@@ -4,7 +4,8 @@
 
 Cylinder with radius 12*lamda with different discretization. 
 
-
+The Frahonoufer region starts at 49.2 m
+The Wavelength is 0.15 m
 
 ## FRESNEL REGION 
 
