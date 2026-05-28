@@ -53,8 +53,8 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
-cylinder_radius_lamda = 2*12.8 # METTI IL TRASMETTIORE PIU LONTANO !!!!!!
-nu = 12
+cylinder_radius_lamda = 10
+nu = 17
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
@@ -132,6 +132,7 @@ print(f"E = {E_wav} * lambda")
 print(f"S = {S_wav} * lambda")
 print(f"E^2/R = {E2divR_wav} * lambda")
 
+RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
@@ -185,7 +186,7 @@ for circle_radius_i in circle_radius:
 
     field_los_full = get_field_los_full(source_point, receive_points)
 
-
+    
     #== Calculating the SHADOW REGION
     paths = scene.compute_paths(max_depth=1,
                                 method="exhaustive",
@@ -210,7 +211,7 @@ for circle_radius_i in circle_radius:
 
     print(f"Shadow region: [{57.3*theta_arr[los_line_idx[0]]}° ,  {57.3*theta_arr[los_line_idx[1]]}°]")
 
-
+    """
     #== Calculating the SCATTERED FIELD WITHOUT DOUBLE-EDGE DIFFRACTION
     paths = scene.compute_paths(max_depth=1,
                                 method="exhaustive",
@@ -232,32 +233,7 @@ for circle_radius_i in circle_radius:
     tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
     receiver_amplitudes_ = np.abs(tmp1) / lamda 
 
-
-    #== Calculating the SCATTERED FILED WITH DOUBLE-EDGE DIFFRACTION
     """
-    paths = scene.compute_paths(max_depth=1,
-                                method="exhaustive",
-                                num_samples=1e6,
-                                los = True,
-                                reflection = True,
-                                diffraction = True,
-                                vertex_diffraction = False,
-                                double_diffraction = True,)
-
-
-    paths.normalize_delays = False
-
-    a, tau = paths.cir()
-    #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
-
-    nans_bool = tf.math.is_nan(tf.math.real(a)) 
-    a = tf.where(nans_bool, tf.zeros_like(a), a)
-
-    path_amplitudes = a[0,:,0,0,0,:,0]
-    tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
-    receiver_amplitudes = np.abs(tmp1) / lamda
-    """
-
     #== Calculating the ANALYTIC SCATTERED FILED (Plane wave incidence)
     
     from sionna.rt.analytical_equations import cylinder_te_inc_scat_total, cylinder_tm_inc_scat_total
@@ -266,22 +242,6 @@ for circle_radius_i in circle_radius:
     	u_inc, an_scattering, an_total = cylinder_te_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
     elif pol == 'VV':
     	u_inc, an_scattering, an_total = cylinder_tm_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
-
-    """
-    plt.figure()
-    plt.title(f"Scattered filed, circle_radius={circle_radius_i}, tx_dist={tx_dist}, disc={nu} ")
-    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_scattering)), 'c-', label='Equation')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), 'b', label='V+EE')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
-    plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
-    plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
-    plt.grid()
-    #plt.xlim(0, 200)
-    plt.legend()
-    plt.xlabel("Azimuth (deg)")
-    plt.ylabel("Amplitude (dB)")
-    plt.savefig(f"./plots/scattered_field/scattered_field_{nu}_rx_{r}.png")
-    """
 
     #========================================= TOTAL FILED =================================================#
 
@@ -334,8 +294,10 @@ for circle_radius_i in circle_radius:
     def rmse(x, y, idxs):
     	return np.sqrt(np.mean((x[idxs]-y[idxs])**2))
     rmse_ee = rmse(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) # RMSE
-    print(f"=> RMSE_forwatd: {rmse_ee} dB")
+    print(f"=> RMSE_forward: {rmse_ee} dB")
 
+    RMSE_result.append({"distance_in_lamda": r, "RMSE": rmse_ee}) 
+    """
     plt.figure()
     fig, ax = plt.subplots()
     ax.plot([0, 1, 2], [0, 1, 4], label="Parametri e risultati")
@@ -356,3 +318,12 @@ for circle_radius_i in circle_radius:
     plt.xlabel("Azimuth (deg)")
     plt.ylabel("Amplitude (dB)")
     plt.savefig(f"./plots/total_field/total_field_{nu}_rx_{r}.png")
+    """
+    
+import pandas as pd
+
+coloumns = ["distance_in_lamda", "RMSE"]
+df = pd.DataFrame(RMSE_result)
+
+df.to_csv(f"./RMSE_results/risultati_{nu}_{cylinder_radius_lamda}.csv", index=False)
+print("Results of RMSE correctly exported")
