@@ -48,7 +48,8 @@ In condizioni di forte prossimità alla struttura, la **discretizzazione a 8 fac
 Utilizzzando lo stesso fattore di cruvatura utilizzato  nell'articolo preso in esame si possono ricavare le relaizoni del fattore di curvatora megliore dei due casi.
 
 Per ottenere una regola più generale si è calcolato il fattore di curvatura per un cilindro di raggio 10 lamda nel caso in cui fosse discretizzato a 8 e a 12 facce.
-Visto che da come si è concluso dalle simulazioni il numero di facce deve rimanere costante al variare della dimensione del cilindro, il fattore di curvatura deve essere moltiplicato per il raggio stesso del cilindro in lamda  normalizzato a 10.
+
+Il numero di facce deve rimanere costante al variare della dimensione del cilindro per il fattore di curvatura deve essere moltiplicato per il raggio stesso del cilindro in lamda e normalizzato a 10.
 
 I risultati sono riportati in seguito.
 
