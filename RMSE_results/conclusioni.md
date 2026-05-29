@@ -19,7 +19,7 @@ A seconda della distanza di osservazione $r$ rispetto alle dimensioni della stru
 
 ## 2. Risultati Ottenuti
 
-L'accuratezza dei modelli è stata valutata calcolando l'errore quadratico medio (**RMSE** - *Root Mean Square Error*) del campo elettromagnetico all'interno della **zona d'ombra**, regione in cui il contributo della diffrazione è predominante.
+L'accuratezza dei modelli è stata valutata calcolando l'errore quadratico medio (**RMSE** - *Root Mean Square Error*) del campo elettromagnetico all'interno della **zona d'ombra**.
 
 I risultati dell'RMSE in funzione della distanza di osservazione per le diverse discretizzazioni sono illustrati nei seguenti grafici:
 
@@ -33,19 +33,18 @@ Un'osservazione fondamentale emersa dalle simulazioni indica che **la scelta del
 
 ## 3. Conclusioni e Linee Guida
 
-Dall'analisi comparativa dei dati emergono criteri di scelta netti e differenziati a seconda dello scenario di ricezione:
+Dall'analisi si possono trattare le seguenti conclusioni:
 
 ### 3.1 Scenario in Campo di Fresnel ($r \gg \lambda$)
-In questa regione, la configurazione che minimizza l'RMSE garantendo il miglior compromesso tra accuratezza numerica e costo computazionale è la **discretizzazione a 12 facce**. Questo livello di dettaglio permette al solutore *double edge* di approssimare correttamente i punti di distacco dell'onda geometrica e i relativi contributi diffrattivi.
-
+In questa regione, la configurazione che minimizza l'RMSE  è la **discretizzazione a 12 facce**
 ### 3.2 Scenario in Campo Vicino Radiativo ($r > \lambda$)
-In condizioni di forte prossimità alla struttura, la **discretizzazione a 8 facce** si è rivelata l'unica opzione applicabile. All'aumentare del dettaglio geometrico (discretizzazioni a 12 e 17 facce), l'algoritmo di Ray Tracing manifesta instabilità numeriche critiche, fallendo completamente nel calcolo e nella convergenza del campo.
+In condizioni di forte prossimità alla struttura, la **discretizzazione a 8 facce** si è rivelata l'unica opzione applicabile. All'aumentare del dettaglio geometrico (discretizzazioni a 12 e 17 facce), l'algoritmo di Ray Tracing manifesta instabilità numeriche critiche, fallendo nel calcolo del campo.
 
 ---
 
 ## 4. Fattore della Curvatura Ottima
 
-Utilizzzando lo stesso fattore di cruvatura utilizzato  nell'articolo preso in esame si possono ricavare le relaizoni del fattore di curvatora megliore dei due casi.
+Utilizzzando lo stesso fattore di cruvatura utilizzato nell'articolo preso in esame si possono ricavare le relaizoni del fattore di curvatora megliore dei due casi.
 
 Per ottenere una regola più generale si è calcolato il fattore di curvatura per un cilindro di raggio 10 lamda nel caso in cui fosse discretizzato a 8 e a 12 facce.
 
