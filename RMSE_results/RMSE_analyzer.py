@@ -1,33 +1,39 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Cylinders dimension
 D = [10, 12.8, 15.9, 19, 22.3, 25.6]
-nu = [8, 12, 17]
+NU = [8, 12, 17]
 
-for j in nu:
+    
+for nu in NU:
     data_frames = []
-    for i in D:
-        df = pd.read_csv(f"./{i}/risultati_{j}_{i}.csv")
-        df["cylinder_dimension"] = i # Adding a coloum with D value in the starting csv
+    for d in D:
+        # Reading data
+        df = pd.read_csv(f"./{d}/risultati_{nu}_{d}.csv")
+        
+        # Adding a coloum with D value in the starting csv
+        df["cylinder_dimension"] = d 
+    
         data_frames.append(df)
 
+
     df_all = pd.concat(data_frames, ignore_index=True)
+    
 
     df_all['distance_in_lamda'] = df_all['distance_in_lamda'].round(2)
-    df_pivot = df_all.pivot(index="distance_in_lamda", columns="cylinder_dimension", values="RMSE")
+    df_pivot_RMSE = df_all.pivot(index="distance_in_lamda", columns="cylinder_dimension", values="RMSE")
     
-    df_pivot = df_pivot.replace(np.inf, np.nan)
-    
-    import seaborn as sns
-    import matplotlib.pyplot as plt
+    df_pivot_RMSE = df_pivot_RMSE.replace(np.inf, np.nan)
 
     plt.figure()
-    sns.heatmap(df_pivot, annot=True, cmap="YlGnBu")
-    plt.title(f"RMSE with {j}-EDGES cylinder")
+    sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu")
+    plt.title(f"RMSE with {nu}-EDGES cylinder")
     plt.xlabel("Cylinder dimension [lambda]")
     plt.ylabel("Distance from cylinder [m]")
-    plt.savefig(f"RMSE_{j}")
+    plt.savefig(f"RMSE_{nu}")
     plt.close()
     
 
