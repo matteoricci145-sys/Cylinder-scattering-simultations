@@ -2,7 +2,7 @@
 
 ## 1. Simulazione e Specifiche Tecniche
 
-Il presente studio analizza l'impatto della discretizzazione geometrica di una struttura cilindrica sull'accuratezza delle simulazioni di propagazione elettromagnetica. Le analisi sono state condotte utilizzando il simulatore Ray Tracing **Sionna**, integrando un'implementazione a doppia lamina (*double edge*) per la gestione dei fenomeni diffrattivi.
+Le analisi sono state condotte utilizzando il simulatore Ray Tracing **Sionna**, integrando un'implementazione a doppia lamina (*double edge*) per la gestione dei fenomeni diffrattivi.
 
 Le simulazioni sono state eseguite configurando i seguenti parametri geometrici e di scenario:
 * **Frequenza di lavoro ($f_c$):** $2.0 \text{ GHz}$
@@ -12,7 +12,7 @@ Le simulazioni sono state eseguite configurando i seguenti parametri geometrici 
 * **Livelli di discretizzazione poligonale:** Il cilindro è stato approssimato valutando configurazioni a 8, 12 e 17 facce.
 
 A seconda della distanza di osservazione $r$ rispetto alle dimensioni della struttura (diametro $D$) e alla lunghezza d'onda $\lambda$, le regioni di spazio analizzate sono state classificate secondo i seguenti criteri fisici:
-* **Campo di Fresnel (Campo vicino radiativo):** Condizione in cui $r \gg \lambda$, ma la distanza non soddisfa ancora il criterio di campo lontano ($r < \frac{2D^2}{\lambda}$).
+* **Campo di Fresnel:** Condizione in cui $r \gg \lambda$, ma la distanza non soddisfa ancora il criterio di campo lontano ($r < \frac{2D^2}{\lambda}$).
 * **Campo vicino radiativo:** Condizione di prossimità alla struttura, definita genericamente per $r > \lambda$.
 
 ---
@@ -39,15 +39,13 @@ Dall'analisi comparativa dei dati emergono criteri di scelta netti e differenzia
 In questa regione, la configurazione che minimizza l'RMSE garantendo il miglior compromesso tra accuratezza numerica e costo computazionale è la **discretizzazione a 12 facce**. Questo livello di dettaglio permette al solutore *double edge* di approssimare correttamente i punti di distacco dell'onda geometrica e i relativi contributi diffrattivi.
 
 ### 3.2 Scenario in Campo Vicino Radiativo ($r > \lambda$)
-In condizioni di forte prossimità alla struttura, la **discretizzazione a 8 facce** si è rivelata l'unica opzione applicabile. All'aumentare del dettaglio geometrico (discretizzazioni a 12 e 17 facce), l'algoritmo di Ray Tracing manifesta instabilità numeriche critiche, fallendo completamente nel calcolo e nella convergenza del campo. Ciò accade perché un'eccessiva densità di spigoli in campo vicino genera raggi diffratti multipli a distanze inferiori al limite di validità asintotica della teoria dei raggi.
+In condizioni di forte prossimità alla struttura, la **discretizzazione a 8 facce** si è rivelata l'unica opzione applicabile. All'aumentare del dettaglio geometrico (discretizzazioni a 12 e 17 facce), l'algoritmo di Ray Tracing manifesta instabilità numeriche critiche, fallendo completamente nel calcolo e nella convergenza del campo.
 
 ---
 
-## 4. Parametrizzazione della Curvatura Ottima
+## 4. Fattore della Curvatura Ottima
 
-Al fine di generalizzare il comportamento e legare la scelta geometrica alla fisica della propagazione, è possibile esprimere l'approssimazione della curvatura mediante una relazione analitica che lega l'errore di corda ($E$), il raggio effettivo ($R$), la lunghezza d'onda ($\lambda$) e l'ingombro massimo ($D$).
-
-I modelli empirici ricavati dalle simulazioni stabiliscono che il parametro di curvatura ottimale rispetta le seguenti proporzioni:
+Utilizzzando lo stesso fattore di cruvatura utilizzato  nell'articolo preso in esame si possono ricavare le relaizoni del fattore di curvatora megliore dei due casi.  
 
 ### Campo di Fresnel
 $$
