@@ -29,14 +29,11 @@ Inoltre la scelta della discerizzazione ottima non dipende dal raggio del cilind
 Volendo rappresentare la curvatura con il parametro di crucatura si ha che:
 
 ### Campo di Fresnel 
-$$
-	E^2/R \approx 5.85 * \lamda *D / 10 
-$$
+$ E^2/R \approx 5.85 * \lamda *D / 10 $
 
 ### Campo vicino radiativo 
-$$
-	E^2/R \approx 2.67 * \lamda *D / 10 
-$$
+$E^2/R \approx 2.67 * \lamda *D / 10 
+$
 
 
 
