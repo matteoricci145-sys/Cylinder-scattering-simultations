@@ -27,8 +27,7 @@ I risultati dell'RMSE in funzione della distanza di osservazione per le diverse 
 ![Grafico 2: Andamento dell'RMSE con discretizzazione a 12 facce](RMSE_12.png)
 ![Grafico 3: Andamento dell'RMSE con discretizzazione a 17 facce](RMSE_17.png)
 
-Un'osservazione fondamentale emersa dalle simulazioni indica che **la scelta della discretizzazione ottima risulta indipendente dal raggio del cilindro ($R$)**, legando la precisione del modello quasi esclusivamente alla distanza di osservazione e alla regione di campo.
-
+Un'osservazione fondamentale emersa dalle simulazioni indica che **la scelta della discretizzazione ottima risulta indipendente dal raggio del cilindro ($R$)**.
 ---
 
 ## 3. Conclusioni e Linee Guida
@@ -44,11 +43,11 @@ In condizioni di forte prossimità alla struttura, la **discretizzazione a 8 fac
 
 ## 4. Fattore della Curvatura Ottima
 
-Utilizzzando lo stesso fattore di cruvatura utilizzato nell'articolo preso in esame si possono ricavare le relaizoni del fattore di curvatora megliore dei due casi.
+Utilizzzando lo stesso fattore di curvatura utilizzato nell'articolo preso in esame si possono ricavare le relazioni del fattore di curvatura migliore dei due casi.
 
 Per ottenere una regola più generale si è calcolato il fattore di curvatura per un cilindro di raggio 10 lamda nel caso in cui fosse discretizzato a 8 e a 12 facce.
 
-Il numero di facce deve rimanere costante al variare della dimensione del cilindro per il fattore di curvatura deve essere moltiplicato per il raggio stesso del cilindro in lamda e normalizzato a 10.
+Il numero di facce deve rimanere costante al variare della dimensione del cilindro, per cui il fattore di curvatura deve essere moltiplicato per il raggio stesso del cilindro in lamda e normalizzato a 10.
 
 I risultati sono riportati in seguito.
 
