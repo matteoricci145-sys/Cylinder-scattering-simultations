@@ -27,11 +27,11 @@ I risultati dell'RMSE in funzione della distanza di osservazione per le diverse 
 ![Grafico 2: Andamento dell'RMSE con discretizzazione a 12 facce](RMSE_12.png)
 ![Grafico 3: Andamento dell'RMSE con discretizzazione a 17 facce](RMSE_17.png)
 
-Un'osservazione fondamentale emersa dalle simulazioni indica che la scelta della discretizzazione ottima risulta indipendente dal raggio del cilindro ($R$).
 ---
 
 ## 3. Conclusioni e Linee Guida
 
+Un'osservazione fondamentale emersa dalle simulazioni indica che la scelta della discretizzazione ottima risulta indipendente dal raggio del cilindro ($R$).
 Dall'analisi si possono trattare le seguenti conclusioni:
 
 ### 3.1 Scenario in Campo di Fresnel ($r \gg \lambda$)
