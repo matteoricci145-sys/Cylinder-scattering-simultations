@@ -54,7 +54,7 @@ print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
 cylinder_radius_lamda = 10
-nu = 17
+nu = 12
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
@@ -136,8 +136,8 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.arange(2, 20, 2) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
-
+circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
+                                cylinder_radius + lamda*np.arange(1, 20, 2)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
 
 for circle_radius_i in circle_radius:
 
@@ -296,8 +296,8 @@ for circle_radius_i in circle_radius:
     rmse_ee = rmse(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) # RMSE
     print(f"=> RMSE_forward: {rmse_ee} dB")
 
-    RMSE_result.append({"distance_in_lamda": r, "RMSE": rmse_ee}) 
-    """
+    RMSE_result.append({"distance_in_lamda": r/lamda, "RMSE": rmse_ee}) 
+    
     plt.figure()
     fig, ax = plt.subplots()
     ax.plot([0, 1, 2], [0, 1, 4], label="Parametri e risultati")
@@ -318,12 +318,12 @@ for circle_radius_i in circle_radius:
     plt.xlabel("Azimuth (deg)")
     plt.ylabel("Amplitude (dB)")
     plt.savefig(f"./plots/total_field/total_field_{nu}_rx_{r}.png")
-    """
+    
     
 import pandas as pd
 
 coloumns = ["distance_in_lamda", "RMSE"]
 df = pd.DataFrame(RMSE_result)
 
-df.to_csv(f"./RMSE_results/risultati_{nu}_{cylinder_radius_lamda}.csv", index=False)
+df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
 print("Results of RMSE correctly exported")

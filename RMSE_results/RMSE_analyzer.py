@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 
 # Cylinders dimension
 D = [10, 12.8, 15.9, 19, 22.3, 25.6]
-NU = [8, 12, 17]
+NU = [6]
 
     
 for nu in NU:
     data_frames = []
     for d in D:
         # Reading data
-        df = pd.read_csv(f"./{d}/risultati_{nu}_{d}.csv")
+        df = pd.read_csv(f"./{d}/risultati_full_{nu}_{d}.csv")
         
         # Adding a coloum with D value in the starting csv
         df["cylinder_dimension"] = d 
@@ -32,8 +32,8 @@ for nu in NU:
     sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu")
     plt.title(f"RMSE with {nu}-EDGES cylinder")
     plt.xlabel("Cylinder dimension [lambda]")
-    plt.ylabel("Distance from cylinder [m]")
-    plt.savefig(f"RMSE_{nu}")
+    plt.ylabel("Distance from cylinder [lambda]")
+    plt.savefig(f"RMSE_{nu}_full")
     plt.close()
     
 
