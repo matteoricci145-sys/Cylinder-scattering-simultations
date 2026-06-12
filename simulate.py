@@ -53,8 +53,8 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
-cylinder_radius_lamda = 10
-nu = 12
+cylinder_radius_lamda = 12.8
+nu = 8
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
@@ -136,8 +136,10 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
-                                cylinder_radius + lamda*np.arange(1, 20, 2)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
+#circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
+#                                cylinder_radius + lamda*np.arange(1, 20, 2)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
+
+circle_radius = [cylinder_radius+lamda*0.5]
 
 for circle_radius_i in circle_radius:
 
@@ -300,19 +302,13 @@ for circle_radius_i in circle_radius:
     
     plt.figure()
     fig, ax = plt.subplots()
-    ax.plot([0, 1, 2], [0, 1, 4], label="Parametri e risultati")
-    plt.title(f"Total filed")
-    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_total)), 'c-', label='Equation')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), 'b-', label='V+EE')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
+    plt.title(rf"Reactive field with 8-discretization, 0.5 $\lambda$-dist, 12.8$\lambda$-radius")
+    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_total)), label='Equation')
+    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='V+EE')
+#    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
     plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
     plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
     plt.grid()
-    info_text = f"Nota: rx_dist={r}, disc={nu}\n RMSE_forward={rmse_ee} dB"
-    ax.text(0.05, 0.95, info_text, 
-            transform=ax.transAxes, 
-            fontsize=10,
-            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     #plt.xlim(0, 200)
     plt.legend()
     plt.xlabel("Azimuth (deg)")
@@ -325,5 +321,5 @@ import pandas as pd
 coloumns = ["distance_in_lamda", "RMSE"]
 df = pd.DataFrame(RMSE_result)
 
-df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
-print("Results of RMSE correctly exported")
+#df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
+#print("Results of RMSE correctly exported")
