@@ -26,17 +26,17 @@ L'accuratezza dei modelli è stata valutata calcolando l'errore quadratico medio
 
 I risultati dell'RMSE in funzione della distanza di osservazione per le diverse discretizzazioni sono illustrati nei seguenti grafici:
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_radiant/RMSE_radiant_6.png)
-![Grafico 2: Andamento dell'RMSE con discretizzazione a 8 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_radiant/RMSE_radiant_8.png)
-![Grafico 3: Andamento dell'RMSE con discretizzazione a 12 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_radiant/RMSE_radiant_12.png)
-![Grafico 3: Andamento dell'RMSE con discretizzazione a 17 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_radiant/RMSE_radiant_17.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_radiant/RMSE_radiant_6.png)
+![Grafico 2: Andamento dell'RMSE con discretizzazione a 8 facce](./RMSE_radiant/RMSE_radiant_8.png)
+![Grafico 3: Andamento dell'RMSE con discretizzazione a 12 facce](./RMSE_radiant/RMSE_radiant_12.png)
+![Grafico 3: Andamento dell'RMSE con discretizzazione a 17 facce](./RMSE_radiant/RMSE_radiant_17.png)
 
 ## 2. Risultati Ottenuti in Campo Reattivo
 
 In campo reattivo soltanto con la discretizzazione da 6 e da 8  il simulatore riesce a calcolare il campo.
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_reactive/RMSE_reactive_6.png)
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 8 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_reactive/RMSE_reactive_8.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_reactive/RMSE_reactive_6.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 8 facce](./RMSE_reactive/RMSE_reactive_8.png)
 
 ## 3. Conclusioni e Linee Guida
 
@@ -85,7 +85,7 @@ A questo fattore di curvatura corrispondono 8 facce.
 
 Il grafico rappresenta l'RMSE mediato sulle diverse dimensioni dei cilindri, alla variazione della distanza per le diverse discretizzazione
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_plot.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_plot.png)
 
 Dal grafico si osserva che:
 
@@ -99,6 +99,6 @@ Per validarei risultati ottenuti in campo vicino si è eseguista un simulazione 
 
 L'oggetto della simulazione è stato il campo scatterato  per un cilindro discretizzato a 8 facce e di diametro $12.8 \lambda$ per cui l'RSME tra l'equazione teorica è circa 3 dB.
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/near_field_validation.png)<
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./near_field_validation.png)<
 
 La simulazione Ray-Tracing si avvicina di più alla teorica rispetto a quella elettromagnetica. Questo potrebbe essere causato dal fatto che nella simulazione Ray-Tracing non è abilitata la diffrazione vertice-spigolo per cui è meglio approssimata la condizione di "ciindro di lunghezza infinita".
