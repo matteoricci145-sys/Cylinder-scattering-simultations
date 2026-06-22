@@ -97,7 +97,7 @@ Dal grafico si osserva che:
 
 Per validarei risultati ottenuti in campo vicino si è eseguista un simulazione elettromagnetica tramite il simulatore CST.
 
-L'oggetto della simulazione è stato il campo scatterato  per un cilindro discretizzato a 8 facce e di diametro $12.8 \lambda$ per cui l'RSME tra l'equazione teorica è circa 3 dB.
+L'oggetto della simulazione è stato il campo scatterato  per un cilindro discretizzato a 8 facce e di diametro $12.8 \lambda$ con il ricevitore a distanza di 0.5 m dal cilindro; per questi parametri l'RSME tra l'equazione teorica è circa 3 dB.
 
 ![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./near_field_validation.png)<
 
