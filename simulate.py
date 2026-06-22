@@ -39,7 +39,6 @@ import time
 # Import Sionna RT components
 from sionna.rt import load_scene, Transmitter, Receiver, PlanarArray, Camera
 
-
 #===================================  SETTING THE SCENE =====================================#
 
 dtype = tf.complex128
@@ -245,6 +244,47 @@ for circle_radius_i in circle_radius:
     elif pol == 'VV':
     	u_inc, an_scattering, an_total = cylinder_tm_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
 
+
+    # ======================================== SCATTERED FIELD =============================================#
+
+    paths = scene.compute_paths(max_depth=1,
+                                method="exhaustive",
+                                num_samples=1e6,
+                                los = True,
+                                reflection = True,
+                                diffraction = True,
+                                vertex_diffraction = False,
+                                double_diffraction = True,)
+    
+    paths.normalize_delays = False
+    
+    a, tau = paths.cir()
+    #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
+    
+    nans_bool = tf.math.is_nan(tf.math.real(a)) 
+    a = tf.where(nans_bool, tf.zeros_like(a), a)
+    
+    path_amplitudes = a[0,:,0,0,0,:,0]
+    tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
+    receiver_amplitudes = np.abs(tmp1) / lamda
+
+    plt.figure()
+    #plt.plot(20*np.log10(coef*receiver_amplitudes_[:num_points//2 + 10]), label='RT', linestyle='--')
+    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_scattering)), label='Equation')
+    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='RT+EE')
+    plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
+    plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
+    plt.title('Scattered field')
+    plt.grid()
+    plt.legend()
+    plt.savefig(f"./plots/scattered_field_{nu}_rx_{r}.png")
+
+    # Save result in csv file
+    import pandas as pd
+    df = pd.DataFrame([20*np.log10(np.abs(an_scattering)),20*np.log10(coef*receiver_amplitudes)],columns=theta_arr*57.3,index=["Equation","Ray-Tracing"])
+    df.to_csv("./near_field_validation/sionna_results.csv",index=True)
+    print(df)
+    
     #========================================= TOTAL FILED =================================================#
 
     #== Calculating the TOTAL FIELD WITHOUT DOUBLE-EDGE DIFFRACTION

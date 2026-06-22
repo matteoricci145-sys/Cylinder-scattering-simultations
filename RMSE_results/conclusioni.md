@@ -81,7 +81,24 @@ $$
 
 A questo fattore di curvatura corrispondono 8 facce. 
 
-## Grafico riassuntivo dei risultati ottenuti
+## 5. Grafico riassuntivo dei risultati ottenuti
 
 Il grafico rappresenta l'RMSE mediato sulle diverse dimensioni dei cilindri, alla variazione della distanza per le diverse discretizzazione
+
 ![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/RMSE_plot.png)
+
+Dal grafico si osserva che:
+
+> **$r < 10\lambda$**: Discretizzazione migliore 8 facce.
+> 
+> **$r > 10\lambda$**: Discretizzazione migliore 12 facce.
+
+## 6.  Validazione dei risultati in campo vicino
+
+Per validarei risultati ottenuti in campo vicino si è eseguista un simulazione elettromagnetica tramite il simulatore CST.
+
+L'oggetto della simulazione è stato il campo scatterato  per un cilindro discretizzato a 8 facce e di diametro $12.8 \lambda$ per cui l'RSME tra l'equazione teorica è circa 3 dB.
+
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](/home/matte/Documenti/Materiale%20per%20tesi/sionna-RT-reflectivity-main/examples/scattering/RMSE_results/near_field_validation.png)<
+
+La simulazione Ray-Tracing si avvicina di più alla teorica rispetto a quella elettromagnetica. Questo potrebbe essere causato dal fatto che nella simulazione Ray-Tracing non è abilitata la diffrazione vertice-spigolo per cui è meglio approssimata la condizione di "ciindro di lunghezza infinita".
