@@ -83,7 +83,7 @@ A questo fattore di curvatura corrispondono 8 facce.
 
 ## 5. Grafico riassuntivo dei risultati ottenuti
 
-Il grafico rappresenta l'RMSE mediato sulle diverse dimensioni dei cilindri, alla variazione della distanza per le diverse discretizzazione
+Il grafico rappresenta l'RMSE mediato sulle diverse dimensioni dei cilindri, alla variazione della distanza per le diverse discretizzazione. Si sono aggiunte anche delle simulazioni fino a $100\lambda$
 
 ![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_plot.png)
 

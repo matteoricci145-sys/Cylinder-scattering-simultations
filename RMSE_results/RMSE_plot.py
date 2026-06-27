@@ -18,6 +18,11 @@ for nu in NU:
         df["cylinder_dimension"] = d 
         data_frames.append(df)
 
+        df_far = pd.read_csv(f"./{d}/risultati_full_far_{nu}_{d}.csv")
+        df_far["cylinder_dimension"] = d
+        data_frames.append(df_far) 
+        
+        
     df_all = pd.concat(data_frames, ignore_index=True)
     df_all['distance_in_lamda'] = df_all['distance_in_lamda'].round(2)
 
@@ -56,9 +61,9 @@ sns.lineplot(
 )
 
 # Personalizzazione del grafico
-plt.title("Andamento dell'RMSE Medio in funzione della Distanza", fontsize=14, fontweight='bold')
+plt.title("RMSE in funzione della Distanza", fontsize=14, fontweight='bold')
 plt.xlabel("Distanza dal cilindro [lambda]", fontsize=12)
-plt.ylabel("RMSE Mediato sulle Dimensioni", fontsize=12)
+plt.ylabel("RMSE Mediato sulle Dimensioni [dB]", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.6)
 plt.legend(title="Valori di NU")
 
@@ -67,7 +72,7 @@ plt.tight_layout()
 plt.savefig("confronto_RMSE_nu.png", dpi=300)
 plt.show()
 
-
+exit()
 # =====================================================================
 # GRAFICO AGGIORNATO (Asse Y invertito e Linea a X=10)
 # =====================================================================

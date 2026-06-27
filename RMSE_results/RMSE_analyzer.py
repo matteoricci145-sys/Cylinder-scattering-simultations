@@ -34,7 +34,7 @@ for nu in NU:
 
     df_pivot_RMSE = df_pivot_RMSE.replace(np.inf, np.nan)
 
-    """
+    
     plt.figure()
     sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu")
     plt.title(f"RMSE REACTIVE with {nu}-EDGES cylinder")
@@ -53,6 +53,6 @@ for nu in NU:
     plt.ylabel("Distance from cylinder [lambda]")
     plt.savefig(f"RMSE_radiant_{nu}")
     plt.close()
-    """    
+        
 
 
