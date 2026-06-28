@@ -97,13 +97,13 @@ scene.rx_array = PlanarArray(num_rows=1,
 # Valuta il campo a distanza maggiori di 20 lamda per vedere se alte dicretizzazioni sono quele ottime 
 
 D = cylinder_radius
-tx_dist = 2*(D**2)/lamda # TX must be in Frahofer zone
+tx_dist = 2*(D**2)/lamda + D # TX must be in Frahofer zone
 
 source_point = np.array([tx_dist, 0.0, 0.0])
 
-tx = Transmitter(name="tx", position=source_point, dtype=dtype)
-
 scene.remove("tx")
+
+tx = Transmitter(name="tx", position=source_point, dtype=dtype)
 scene.add(tx)
 
 coef = (4 * np.pi * tx_dist)
@@ -146,20 +146,32 @@ RMSE_result = []
 #circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
 #                                cylinder_radius + lamda*np.arange(1, 20, 2)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
 
-circle_radius = [cylinder_radius+lamda*0.5]
+circle_radius = cylinder_radius + np.array([0.5, 10, 50])*lamda
+
+i_loop = 1
 
 for circle_radius_i in circle_radius:
 
-    print("\n\n=== ELETTROMAGNETIC PARAMETERS ===")
+    """ THIS IS USELESS !!!
+    # ====== PLACING RX TO HAVE THE SAME RECIEVED POWER ===== #
 
+    link_distance = tx_dist - cylinder_radius
+
+    # Link budget formula 
+    pt = link_distance**2/30
+
+     
+    scene.remove("tx")
+
+    tx = Transmitter(name="tx", position=source_point, dtype=dtype, power_dbm=10*np.log10(pt*1e3))
+    scene.add(tx)
+
+    print(f"Trasmitter distance: {link_distance}")
+    print(f"Power in mW: {pt*1e3}")
+    """
+    
     r = circle_radius_i-cylinder_radius
  
-    
-    #print(f"circle_of_recievers_radius: {circle_radius_i}")
-    print(f"Distance from the cylinder: {r}")
-    print(f"Far field condition: {r} >> {lamda}")
-    print(f"Frahnoufer: {r} > {2* D**2 /lamda}")
-
     # ============================== PLACING RX ==================================================== #
     num_points = 720
 
@@ -218,31 +230,8 @@ for circle_radius_i in circle_radius:
     dist = np.linalg.norm(source_point - receive_points, axis=1)
     field_los_full2 = field_los_full * np.exp(-1j * 2 * np.pi * fc * dist/speed_of_light)
 
-    print(f"Shadow region: [{57.3*theta_arr[los_line_idx[0]]}° ,  {57.3*theta_arr[los_line_idx[1]]}°]")
 
-    """
-    #== Calculating the SCATTERED FIELD WITHOUT DOUBLE-EDGE DIFFRACTION
-    paths = scene.compute_paths(max_depth=1,
-                                method="exhaustive",
-                                num_samples=1e6,
-                                los = True,
-                                reflection = True,
-                                diffraction = True,
-                                vertex_diffraction = False,
-                                double_diffraction = False,)
-
-    paths.normalize_delays = False
-    a, tau = paths.cir()
-    #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
-
-    nans_bool = tf.math.is_nan(tf.math.real(a)) 
-    a = tf.where(nans_bool, tf.zeros_like(a), a)
-
-    path_amplitudes = a[0,:,0,0,0,:,0]
-    tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
-    receiver_amplitudes_ = np.abs(tmp1) / lamda 
-
-    """
+    
     #== Calculating the ANALYTIC SCATTERED FILED (Plane wave incidence)
     
     from sionna.rt.analytical_equations import cylinder_te_inc_scat_total, cylinder_tm_inc_scat_total
@@ -276,98 +265,29 @@ for circle_radius_i in circle_radius:
     tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
     receiver_amplitudes = np.abs(tmp1) / lamda
 
-    plt.figure()
+    plt.subplot(3,1,i_loop)
+    i_loop = i_loop + 1
     #plt.plot(20*np.log10(coef*receiver_amplitudes_[:num_points//2 + 10]), label='RT', linestyle='--')
     plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_scattering)), label='Equation')
     plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='RT+EE')
     plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
     plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
-    plt.title('Scattered field')
+    plt.title(f'Scattered field, rx_dist = {r/lamda} $\lambda$')
+    plt.xlabel("Degree [°]")
+    plt.ylabel("|E_scattered|")
     plt.grid()
     plt.legend()
-    plt.savefig(f"./plots/scattered_field_{nu}_rx_{r}.png")
+    
+plt.tight_layout() # Fondamentale per evitare che i titoli si sovrappongan
+plt.savefig(f"./plots/scattered_field_{nu}_rx_{r/lamda}.png")
 
-    # Save result in csv file
-    import pandas as pd
-    df = pd.DataFrame([20*np.log10(np.abs(an_scattering)),20*np.log10(coef*receiver_amplitudes)],columns=theta_arr*57.3,index=["Equation","Ray-Tracing"])
-    df.to_csv("./near_field_validation/sionna_results.csv",index=True)
-    print(df)
-    
-    #========================================= TOTAL FILED =================================================#
-
-    #== Calculating the TOTAL FIELD WITHOUT DOUBLE-EDGE DIFFRACTION
-    
-    paths = scene.compute_paths(max_depth=1,
-                                method="exhaustive",
-                                num_samples=1e6,
-                                los = True,
-                                reflection = True,
-                                diffraction = True,
-                                vertex_diffraction = False,
-                                double_diffraction = False,)
-    
-    a, tau = paths.cir()
-    #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
-    
-    nans_bool = tf.math.is_nan(tf.math.real(a)) 
-    a = tf.where(nans_bool, tf.zeros_like(a), a)
-    
-    path_amplitudes = a[0,:,0,0,0,:,0]
-    tmp1 = np.sum(path_amplitudes, axis=1)
-    receiver_amplitudes_ = np.abs(tmp1) / lamda
-
-    #== Calculating the TOTAL FIELD WITH DOUBLE-EDGE DIFFRACTION
-
-    paths = scene.compute_paths(max_depth=1,
-                                method="exhaustive",
-                                num_samples=1e6,
-                                los = True,
-                                reflection = True,
-                                diffraction = True,
-                                vertex_diffraction = False,
-                                double_diffraction = True,)
-    
-    a, tau = paths.cir()
-    #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
-    
-    nans_bool = tf.math.is_nan(tf.math.real(a)) 
-    a = tf.where(nans_bool, tf.zeros_like(a), a)
-    
-    path_amplitudes = a[0,:,0,0,0,:,0]
-    tmp1 = np.sum(path_amplitudes, axis=1)
-    receiver_amplitudes = np.abs(tmp1) / lamda
-
-    forw_idxs = np.arange(los_line_idx[0], los_line_idx[1]) # Forward scattering indexs
-
-    coef = (4 * np.pi * tx_dist)
-
-    def rmse(x, y, idxs):
-    	return np.sqrt(np.mean((x[idxs]-y[idxs])**2))
-    rmse_ee = rmse(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) # RMSE
-    print(f"=> RMSE_forward: {rmse_ee} dB")
-
-    RMSE_result.append({"distance_in_lamda": r/lamda, "RMSE": rmse_ee}) 
-    
-    plt.figure()
-    fig, ax = plt.subplots()
-    plt.title(rf"Reactive field with 8-discretization, 0.5 $\lambda$-dist, 12.8$\lambda$-radius")
-    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_total)), label='Equation')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='V+EE')
-#    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
-    plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
-    plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
-    plt.grid()
-    #plt.xlim(0, 200)
-    plt.legend()
-    plt.xlabel("Azimuth (deg)")
-    plt.ylabel("Amplitude (dB)")
-    plt.savefig(f"./plots/total_field/total_field_{nu}_rx_{r}.png")
-    
-    
+"""
+# Save result in csv file
 import pandas as pd
-
-coloumns = ["distance_in_lamda", "RMSE"]
-df = pd.DataFrame(RMSE_result)
-
+df = pd.DataFrame([20*np.log10(np.abs(an_scattering)),20*np.log10(coef*receiver_amplitudes)],columns=theta_arr*57.3,index=["Equation","Ray-Tracing"])
+df.to_csv("./near_field_validation/sionna_results2.csv",index=True)
+print(df)
+"""
+    
 #df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
 #print("Results of RMSE correctly exported")

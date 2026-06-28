@@ -54,13 +54,18 @@ print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
 CYLINDER_RADIUS_LAMDA_list = [10, 12.8, 15.9, 19, 22.3, 25.6]
-NU_list = [6]
+NU_list = [6, 8, 12, 17]
 
 for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list: 
+
+    print(f"=== CYLINDER RADIUS {cylinder_radius_lamda} ===")
     for nu in NU_list:
 
+        print(f"NU: {nu}")
+
         cylinder_radius = cylinder_radius_lamda * lamda
-        print(f"cylinder_radius: {cylinder_radius}")
+
+        #print(f"cylinder_radius: {cylinder_radius}")
 
         scene = load_scene(f"./cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
 
@@ -130,29 +135,29 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         S_wav = cylinder_radius * (1 - np.cos(np.pi / nu)) / lamda  # in wavelengths
         E2divR_wav = E_wav**2 * lamda / cylinder_radius
 
-        print("\n=== DISCRETIZATION PARAMETERS ===")
-        print(f"E = {E_wav} * lambda")
-        print(f"S = {S_wav} * lambda")
-        print(f"E^2/R = {E2divR_wav} * lambda")
+        #print("\n=== DISCRETIZATION PARAMETERS ===")
+        #print(f"E = {E_wav} * lambda")
+        #print(f"S = {S_wav} * lambda")
+        #print(f"E^2/R = {E2divR_wav} * lambda")
 
         RMSE_result = []
 
         #=========================================== SIMULATION =====================================================#
 
-        circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
-                                        cylinder_radius + lamda*np.arange(1, 20, 1)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
-
+        circle_radius = cylinder_radius + lamda*np.arange(20, 120, 10)
+        
         for circle_radius_i in circle_radius:
 
-            print("\n\n=== ELETTROMAGNETIC PARAMETERS ===")
+            #print("\n\n=== ELETTROMAGNETIC PARAMETERS ===")
 
             r = circle_radius_i-cylinder_radius
-         
+
+            print(f"    Distance: {r/lamda}")        
             
             #print(f"circle_of_recievers_radius: {circle_radius_i}")
-            print(f"Distance from the cylinder: {r}")
-            print(f"Far field condition: {r} >> {lamda}")
-            print(f"Frahnoufer: {r} > {2* D**2 /lamda}")
+            #print(f"Distance from the cylinder: {r}")
+            #print(f"Far field condition: {r} >> {lamda}")
+            #print(f"Frahnoufer: {r} > {2* D**2 /lamda}")
 
             # ============================== PLACING RX ==================================================== #
             num_points = 720
@@ -212,7 +217,7 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
             dist = np.linalg.norm(source_point - receive_points, axis=1)
             field_los_full2 = field_los_full * np.exp(-1j * 2 * np.pi * fc * dist/speed_of_light)
 
-            print(f"Shadow region: [{57.3*theta_arr[los_line_idx[0]]}° ,  {57.3*theta_arr[los_line_idx[1]]}°]")
+            #print(f"Shadow region: [{57.3*theta_arr[los_line_idx[0]]}° ,  {57.3*theta_arr[los_line_idx[1]]}°]")
 
             """
             #== Calculating the SCATTERED FIELD WITHOUT DOUBLE-EDGE DIFFRACTION
@@ -328,5 +333,5 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         coloumns = ["distance_in_lamda", "RMSE"]
         df = pd.DataFrame(RMSE_result)
 
-        df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
+        df.to_csv(f"./RMSE_results/risultati_full_far_{nu}_{cylinder_radius_lamda}.csv", index=False)
         print("Results of RMSE correctly exported")
