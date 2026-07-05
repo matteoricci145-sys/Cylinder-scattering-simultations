@@ -146,7 +146,7 @@ RMSE_result = []
 #circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
 #                                cylinder_radius + lamda*np.arange(1, 20, 2)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
 
-circle_radius = cylinder_radius + np.array([0.5, 10, 50])*lamda
+circle_radius = cylinder_radius + np.array([0.5])*lamda
 
 i_loop = 1
 
@@ -265,6 +265,7 @@ for circle_radius_i in circle_radius:
     tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
     receiver_amplitudes = np.abs(tmp1) / lamda
 
+"""
     plt.subplot(3,1,i_loop)
     i_loop = i_loop + 1
     #plt.plot(20*np.log10(coef*receiver_amplitudes_[:num_points//2 + 10]), label='RT', linestyle='--')
@@ -280,14 +281,10 @@ for circle_radius_i in circle_radius:
     
 plt.tight_layout() # Fondamentale per evitare che i titoli si sovrappongan
 plt.savefig(f"./plots/scattered_field_{nu}_rx_{r/lamda}.png")
-
 """
+
 # Save result in csv file
 import pandas as pd
 df = pd.DataFrame([20*np.log10(np.abs(an_scattering)),20*np.log10(coef*receiver_amplitudes)],columns=theta_arr*57.3,index=["Equation","Ray-Tracing"])
 df.to_csv("./near_field_validation/sionna_results2.csv",index=True)
 print(df)
-"""
-    
-#df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
-#print("Results of RMSE correctly exported")

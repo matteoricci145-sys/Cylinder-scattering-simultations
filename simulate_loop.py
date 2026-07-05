@@ -1,3 +1,11 @@
+# 
+# Run a arbitrarius number simulation specifying 
+# -> Radius of cylinder
+# -> Discretization of the cylinder
+# -> Distance of the circle of recievers
+#
+# Produces plots and .csv of RSME of the scattered and tital field
+
 #===================================  IMP LIBRARIES =====================================#
 
 import os
@@ -53,8 +61,11 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
-CYLINDER_RADIUS_LAMDA_list = [10, 12.8, 15.9, 19, 22.3, 25.6]
-NU_list = [6, 8, 12, 17]
+#CYLINDER_RADIUS_LAMDA_list = [10, 12.8, 15.9, 19, 22.3, 25.6]
+#NU_list = [6, 8, 12, 17]
+
+CYLINDER_RADIUS_LAMDA_list = [5]
+NU_list = [6,8,12,17]
 
 for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list: 
 
@@ -67,7 +78,7 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
         #print(f"cylinder_radius: {cylinder_radius}")
 
-        scene = load_scene(f"./cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+        scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
 
         scene.frequency = fc
         scene.synthetic_array = True
@@ -98,8 +109,8 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
 
         D = cylinder_radius
-        tx_dist = 2*(D**2)/lamda # TX must be in Frahofer zone
-
+        #tx_dist = 2*((2*D)**2)/lamda + D
+        tx_dist = 2* D**2/lamda
         source_point = np.array([tx_dist, 0.0, 0.0])
 
         tx = Transmitter(name="tx", position=source_point, dtype=dtype)
@@ -144,8 +155,8 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
         #=========================================== SIMULATION =====================================================#
 
-        circle_radius = cylinder_radius + lamda*np.arange(20, 120, 10)
-        
+        circle_radius = cylinder_radius + lamda*np.logspace(-1, 3, 50)
+                
         for circle_radius_i in circle_radius:
 
             #print("\n\n=== ELETTROMAGNETIC PARAMETERS ===")
@@ -333,5 +344,5 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         coloumns = ["distance_in_lamda", "RMSE"]
         df = pd.DataFrame(RMSE_result)
 
-        df.to_csv(f"./RMSE_results/risultati_full_far_{nu}_{cylinder_radius_lamda}.csv", index=False)
+        df.to_csv(f"./RMSE_results/RESULTS_{nu}_{cylinder_radius_lamda}.csv", index=False)
         print("Results of RMSE correctly exported")

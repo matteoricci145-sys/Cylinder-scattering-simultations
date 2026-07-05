@@ -11,9 +11,12 @@ print(sionna)
 
 
 # Nel file ci sono i risltati di cst con theta=90 
-cst = pd.read_csv("far_filed_2m.txt", sep=r'\s+')
+#cst = pd.read_csv("near_field_disc_cylinder.txt", sep=r'\s+')
+cst = pd.read_csv("near_field_cylinder.txt", sep=r'\s+')
 print("\n=== CST df ===")
 cst = cst["Abs(E)[dB(V/m)]"]
+#cst = cst["Abs(Rad.)[dB(V/m)]"]
+
 print(cst)
 
 print("\n === SIONA_FILTERED df ===")
@@ -36,7 +39,3 @@ plt.ylabel("Abs(E) [dB]")
 plt.legend(df.columns)
 plt.savefig("near_field_validation.png")
 plt.show()
-
-
-
-

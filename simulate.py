@@ -1,3 +1,11 @@
+# 
+# Run one simulation specifying 
+# -> Radius of cylinder
+# -> Discretization of the cylinder
+# -> Distance of the circle of recievers
+#
+# Produces plots and .csv of RSME of the scattered and tital field
+
 #===================================  IMP LIBRARIES =====================================#
 
 import os
@@ -52,13 +60,13 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
-cylinder_radius_lamda = 12.8
-nu = 8
+cylinder_radius_lamda = 10
+nu = 12
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
 
-scene = load_scene(f"./cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
 
 scene.frequency = fc
 scene.synthetic_array = True
@@ -97,7 +105,7 @@ scene.rx_array = PlanarArray(num_rows=1,
 # Valuta il campo a distanza maggiori di 20 lamda per vedere se alte dicretizzazioni sono quele ottime 
 
 D = cylinder_radius
-tx_dist = 2*(D**2)/lamda # TX must be in Frahofer zone
+tx_dist = 2*((D*2)**2)/lamda + D # TX must be in Frahofer zone
 
 source_point = np.array([tx_dist, 0.0, 0.0])
 
@@ -143,10 +151,8 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-#circle_radius = np.concatenate([cylinder_radius + lamda*np.arange(0.1, 1, 0.1), 
-#                                cylinder_radius + lamda*np.arange(1, 20, 2)]) #np.array([0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3])
 
-circle_radius = [cylinder_radius+lamda*0.5]
+circle_radius = cylinder_radius + lamda*np.logspace(-1, 3, 50)
 
 for circle_radius_i in circle_radius:
 
@@ -277,9 +283,9 @@ for circle_radius_i in circle_radius:
     receiver_amplitudes = np.abs(tmp1) / lamda
 
     plt.figure()
-    #plt.plot(20*np.log10(coef*receiver_amplitudes_[:num_points//2 + 10]), label='RT', linestyle='--')
-    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_scattering)), label='Equation')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='RT+EE')
+    #plt.plot(20*np.log10(coef*receiver_amplitudes_[:num_points//2 + 10]), label='RT', linestyle='--') # Classic RT
+    plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_scattering)), label='Equation') # Equation
+    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='RT+EE') # RT with double-edge
     plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
     plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
     plt.title('Scattered field')
@@ -369,5 +375,5 @@ import pandas as pd
 coloumns = ["distance_in_lamda", "RMSE"]
 df = pd.DataFrame(RMSE_result)
 
-#df.to_csv(f"./RMSE_results/risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
+df.to_csv(f"./risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
 #print("Results of RMSE correctly exported")
