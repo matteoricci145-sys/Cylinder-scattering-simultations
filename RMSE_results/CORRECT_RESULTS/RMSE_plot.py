@@ -65,41 +65,9 @@ plt.legend(title="Valori di NU")
 # Mostra e salva il grafico
 plt.tight_layout()
 plt.savefig("confronto_RMSE_nu.png", dpi=300)
-plt.show()
 
-exit()
-# =====================================================================
-# GRAFICO AGGIORNATO (Asse Y invertito e Linea a X=10)
-# =====================================================================
-plt.figure(figsize=(10, 6))
 
-# Creiamo il grafico a linee
-sns.lineplot(
-    data=df_finale, 
-    x="distance_in_lamda", 
-    y="RMSE", 
-    hue="nu", 
-    marker="o", 
-    palette="Set1"
-)
+plt.xlim([0, 100])
+plt.savefig("confronto_near_RMSE_nu.png", dpi=300)
 
-# 1. INVERTIRE L'ASSE Y (L'RMSE più basso va in alto)
-plt.gca().invert_yaxis()
 
-# 2. TRACCIARE LA LINEA VERTICALE A DISTANZA = 10
-# ls="--" la fa tratteggiata, color="red" la rende visibile, alpha ne regola la trasparenza
-plt.axvline(x=10, color="red", linestyle="--", linewidth=1.5, alpha=0.8, label="Distanza = 10 $\lambda$")
-
-# Personalizzazione del grafico
-plt.title("Andamento dell'RMSE Medio (Valori migliori in alto)", fontsize=14, fontweight='bold')
-plt.xlabel("Distanza dal cilindro [lambda]", fontsize=12)
-plt.ylabel("RMSE Mediato (Scala Invertita)", fontsize=12)
-plt.grid(True, linestyle="--", alpha=0.5)
-
-# Aggiorniamo la legenda per includere anche la linea verticale appena aggiunta
-plt.legend(title="Legenda")
-
-# Mostra e salva il grafico
-plt.tight_layout()
-plt.savefig("confronto_RMSE_nu_invertito.png", dpi=300)
-plt.show()
