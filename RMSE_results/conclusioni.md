@@ -26,17 +26,17 @@ L'accuratezza dei modelli è stata valutata calcolando l'errore quadratico medio
 
 I risultati dell'RMSE in funzione della distanza di osservazione per le diverse discretizzazioni sono illustrati nei seguenti grafici:
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_radiant/RMSE_radiant_6.png)
-![Grafico 2: Andamento dell'RMSE con discretizzazione a 8 facce](./RMSE_radiant/RMSE_radiant_8.png)
-![Grafico 3: Andamento dell'RMSE con discretizzazione a 12 facce](./RMSE_radiant/RMSE_radiant_12.png)
-![Grafico 3: Andamento dell'RMSE con discretizzazione a 17 facce](./RMSE_radiant/RMSE_radiant_17.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./CORRECT_RESULTS/RMSE_radiant_6.png)
+![Grafico 2: Andamento dell'RMSE con discretizzazione a 8 facce](./CORRECT_RESULTS/RMSE_radiant_8.png)
+![Grafico 3: Andamento dell'RMSE con discretizzazione a 12 facce](./CORRECT_RESULTS/RMSE_radiant_12.png)
+![Grafico 3: Andamento dell'RMSE con discretizzazione a 17 facce](./CORRECT_RESULTS/RMSE_radiant_17.png)
 
 ## 2. Risultati Ottenuti in Campo Reattivo
 
 In campo reattivo soltanto con la discretizzazione da 6 e da 8  il simulatore riesce a calcolare il campo.
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_reactive/RMSE_reactive_6.png)
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 8 facce](./RMSE_reactive/RMSE_reactive_8.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./CORRECT_RESULTS/RMSE_reactive_6.png)
+![Grafico 1: Andamento dell'RMSE con discretizzazione a 8 facce](./CORRECT_RESULTS/RMSE_reactive_8.png)
 
 ## 3. Conclusioni e Linee Guida
 
@@ -81,24 +81,64 @@ $$
 
 A questo fattore di curvatura corrispondono 8 facce. 
 
-## 5. Grafico riassuntivo dei risultati ottenuti
+## 5. Grafico dell'RMSE per ogni dimesione e discretizzazioni
 
-Il grafico rappresenta l'RMSE mediato sulle diverse dimensioni dei cilindri, alla variazione della distanza per le diverse discretizzazione. Si sono aggiunte anche delle simulazioni fino a $100\lambda$
+I grafici seguenti rappresentano l'RMSE per le diverse dimensioni dei cilindri, alla variazione della distanza e per le diverse discretizzazione. Si sono aggiunte anche delle simulazioni fino a $100\lambda$
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./RMSE_plot.png)
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_10.png)
 
-Dal grafico si osserva che:
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_12.8.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_15.9.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_19.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_22.3.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_25.6.png)
+
+
+
+Dal grafici si osserva che:
 
 > **$r < 10\lambda$**: Discretizzazione migliore 8 facce.
 > 
 > **$r > 10\lambda$**: Discretizzazione migliore 12 facce.
 
-## 6.  Validazione dei risultati in campo vicino
+Con la sola eccezione del cilindro più piccolo di raggio $10 \lambda$, in cui la discretizzazione a 17 è uguale a quella a 12.
+
+## 6. Cilindro di piccole dimensioni
+
+Si è eseguita la stessa analisi del capitolo 5. per un cilindro di raggio D = $5 \lambda$.
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/near_distance/near_RMSE_D_5.png)
+
+In questo caso si osserva che il simulatore non riesce a prevdere il comportamente del campo con la stessa efficacia di un cilindro più grande. 
+
+## 7. Comportamento dell'RMSE a più grandi distanze
+
+I grafici seguenti rappresentano l'RMSE per le diverse dimensioni dei cilindri, alla variazione della distanza e per le diverse discretizzazione. Si sono aggiunte anche delle simulazioni fino a $1000\lambda$
+
+In ogni grafico la linea blu determina l'inzio della **zona di Frahoufer** per il cilindro in esame.
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/all_distances/RMSE_D_10.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/all_distances/RMSE_D_12.8.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/all_distances/RMSE_D_15.9.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/all_distances/RMSE_D_19.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/all_distances/RMSE_D_22.3.png)
+
+![Grafico](./CORRECT_RESULTS/dimension_analysis/all_distances/RMSE_D_25.6.png)
+
+## 8.  TODO: Validazione dei risultati in campo vicino TOD
 
 Per validarei risultati ottenuti in campo vicino si è eseguista un simulazione elettromagnetica tramite il simulatore CST.
 
 L'oggetto della simulazione è stato il campo scatterato  per un cilindro discretizzato a 8 facce e di diametro $12.8 \lambda$ con il ricevitore a distanza di 0.5 m dal cilindro; per questi parametri l'RSME tra l'equazione teorica è circa 3 dB.
 
-![Grafico 1: Andamento dell'RMSE con discretizzazione a 6 facce](./near_field_validation.png)<
+![Grafico: Andamento dell'RMSE con discretizzazione a 6 facce](./near_field_validation.png)<
 
 La simulazione Ray-Tracing si avvicina di più alla teorica rispetto a quella elettromagnetica. Questo potrebbe essere causato dal fatto che nella simulazione Ray-Tracing non è abilitata la diffrazione vertice-spigolo per cui è meglio approssimata la condizione di "ciindro di lunghezza infinita".

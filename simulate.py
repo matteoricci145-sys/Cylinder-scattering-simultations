@@ -61,7 +61,7 @@ print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
 cylinder_radius_lamda = 10
-nu = 12
+nu = 17
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")

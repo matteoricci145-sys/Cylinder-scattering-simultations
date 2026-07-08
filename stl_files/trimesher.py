@@ -2,7 +2,7 @@
 
 import trimesh
 
-cylinder_radius_lamda_list = [5]
+cylinder_radius_lamda_list = [10]
 nu = 17
 
 for cylinder_radius_lamda in cylinder_radius_lamda_list:
