@@ -1,3 +1,4 @@
+
 # 
 # Run one simulation specifying 
 # -> Radius of cylinder
@@ -60,13 +61,14 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
-cylinder_radius_lamda = 10
-nu = 17
+cylinder_radius_lamda = 12.8
+nu = 12
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
 
-scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+#scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+scene = load_scene(sionna.rt.scene.cylinder_12, dtype)
 
 scene.frequency = fc
 scene.synthetic_array = True
@@ -151,8 +153,7 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-
-circle_radius = cylinder_radius + lamda*np.logspace(-1, 3, 50)
+circle_radius = cylinder_radius + lamda*np.arange(100, 1001, 100)
 
 for circle_radius_i in circle_radius:
 
@@ -282,6 +283,7 @@ for circle_radius_i in circle_radius:
     tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
     receiver_amplitudes = np.abs(tmp1) / lamda
 
+    """
     plt.figure()
     #plt.plot(20*np.log10(coef*receiver_amplitudes_[:num_points//2 + 10]), label='RT', linestyle='--') # Classic RT
     plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_scattering)), label='Equation') # Equation
@@ -292,11 +294,12 @@ for circle_radius_i in circle_radius:
     plt.grid()
     plt.legend()
     plt.savefig(f"./plots/scattered_field_{nu}_rx_{r}.png")
+    """
 
     # Save result in csv file
     import pandas as pd
     df = pd.DataFrame([20*np.log10(np.abs(an_scattering)),20*np.log10(coef*receiver_amplitudes)],columns=theta_arr*57.3,index=["Equation","Ray-Tracing"])
-    df.to_csv("./near_field_validation/sionna_results.csv",index=True)
+    #df.to_csv("./near_field_validation/sionna_results.csv",index=True)
     print(df)
     
     #========================================= TOTAL FILED =================================================#
@@ -356,18 +359,18 @@ for circle_radius_i in circle_radius:
     
     plt.figure()
     fig, ax = plt.subplots()
-    plt.title(rf"Reactive field with 8-discretization, 0.5 $\lambda$-dist, 12.8$\lambda$-radius")
+    plt.title(rf"Total field (Shadow region) {r/lamda}$\lambda$-dist, {cylinder_radius_lamda}$\lambda$-radius, {nu} NU")
     plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_total)), label='Equation')
-    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='V+EE')
+    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='Sionna-RT')
 #    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
-    plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
-    plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
+    #plt.axvline(x=57.3*theta_arr[los_line_idx[0]], color='r', linestyle='--', label='LOS/NLOS')
+    #plt.axvline(x=57.3*theta_arr[los_line_idx[1]], color='r', linestyle='--')
     plt.grid()
-    #plt.xlim(0, 200)
+    plt.xlim([57.3*theta_arr[los_line_idx[0]],57.3*theta_arr[los_line_idx[1]]])
     plt.legend()
     plt.xlabel("Azimuth (deg)")
     plt.ylabel("Amplitude (dB)")
-    plt.savefig(f"./plots/total_field/total_field_{nu}_rx_{r}.png")
+    plt.savefig(f".//LEN_total_field_{nu}_rx_{r/lamda}.png")
     
     
 import pandas as pd
@@ -375,5 +378,5 @@ import pandas as pd
 coloumns = ["distance_in_lamda", "RMSE"]
 df = pd.DataFrame(RMSE_result)
 
-df.to_csv(f"./risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
+#df.to_csv(f"./risultati_full_{nu}_{cylinder_radius_lamda}.csv", index=False)
 #print("Results of RMSE correctly exported")

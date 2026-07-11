@@ -1,4 +1,3 @@
-# 
 # Run a arbitrarius number simulation specifying 
 # -> Radius of cylinder
 # -> Discretization of the cylinder
@@ -64,8 +63,8 @@ print(f"lamda: {lamda}")
 #CYLINDER_RADIUS_LAMDA_list = [10, 12.8, 15.9, 19, 22.3, 25.6]
 #NU_list = [6, 8, 12, 17]
 
-CYLINDER_RADIUS_LAMDA_list = [5]
-NU_list = [6,8,12,17]
+CYLINDER_RADIUS_LAMDA_list = [12.8]
+NU_list = [12]
 
 for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list: 
 
@@ -79,6 +78,8 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         #print(f"cylinder_radius: {cylinder_radius}")
 
         scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+        #scene = load_scene(sionna.rt.scene.cylinder_12, dtype)
+        
 
         scene.frequency = fc
         scene.synthetic_array = True
@@ -109,8 +110,7 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
 
         D = cylinder_radius
-        #tx_dist = 2*((2*D)**2)/lamda + D
-        tx_dist = 2* D**2/lamda
+        tx_dist = 2*((2*D)**2)/lamda + D
         source_point = np.array([tx_dist, 0.0, 0.0])
 
         tx = Transmitter(name="tx", position=source_point, dtype=dtype)
