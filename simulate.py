@@ -67,8 +67,8 @@ nu = 12
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
 
-#scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
-scene = load_scene(sionna.rt.scene.cylinder_12, dtype)
+scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/long/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+#scene = load_scene(sionna.rt.scene.cylinder_12, dtype)
 
 scene.frequency = fc
 scene.synthetic_array = True
@@ -153,7 +153,7 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.arange(100, 1001, 100)
+circle_radius = cylinder_radius + lamda*np.arange(100, 110, 10e3)
 
 for circle_radius_i in circle_radius:
 
@@ -163,12 +163,12 @@ for circle_radius_i in circle_radius:
  
     
     #print(f"circle_of_recievers_radius: {circle_radius_i}")
-    print(f"Distance from the cylinder: {r}")
+    print(f"Distance from the cylinder: {r/lamda} lamda")
     print(f"Far field condition: {r} >> {lamda}")
     print(f"Frahnoufer: {r} > {2* D**2 /lamda}")
 
     # ============================== PLACING RX ==================================================== #
-    num_points = 720
+    num_points = 720*3
 
     theta_arr = np.linspace(0.0, 2*np.pi, num_points, endpoint=False)
 
@@ -215,6 +215,9 @@ for circle_radius_i in circle_radius:
     a, tau = paths.cir()
     path_amplitudes = a[0,:,0,0,0,:,0]
     receiver_amplitudes_los = np.abs(np.sum(path_amplitudes, axis=1)) #/ lamda
+
+    plt.plot(receiver_amplitudes_los)
+    plt.show()
 
     los_line_idx = np.where(receiver_amplitudes_los <= 1e-6)[0][0], np.where(receiver_amplitudes_los <= 1e-6)[0][-1] #first and last index of the shadow region
     field_los_full = np.where(receiver_amplitudes_los <= 0.0, field_los_full, receiver_amplitudes_los) + 1e-6
@@ -356,6 +359,7 @@ for circle_radius_i in circle_radius:
     print(f"=> RMSE_forward: {rmse_ee} dB")
 
     RMSE_result.append({"distance_in_lamda": r/lamda, "RMSE": rmse_ee}) 
+
     
     plt.figure()
     fig, ax = plt.subplots()
@@ -370,7 +374,7 @@ for circle_radius_i in circle_radius:
     plt.legend()
     plt.xlabel("Azimuth (deg)")
     plt.ylabel("Amplitude (dB)")
-    plt.savefig(f".//LEN_total_field_{nu}_rx_{r/lamda}.png")
+    plt.savefig(f".//total_field_{nu}_rx_{r/lamda}.png")
     
     
 import pandas as pd
