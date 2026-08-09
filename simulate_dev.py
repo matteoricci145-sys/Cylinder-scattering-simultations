@@ -155,7 +155,7 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.array([200,2e3])
+circle_radius = cylinder_radius + lamda*np.array([100,200,1500,2e3])
 
 results = []
 analytical = []

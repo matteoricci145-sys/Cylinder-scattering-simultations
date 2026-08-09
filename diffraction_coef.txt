@@ -1,0 +1,105 @@
+        # Compute D_1, D_2, D_3, D_4
+        # [num_targets, num_sources, max_num_paths]
+        phi_m = phi - phi_prime
+        phi_p = phi + phi_prime
+        
+        # [num_targets, num_sources, max_num_paths]
+        cot_1 = cot((PI + phi_m)/(2*n))
+        cot_2 = cot((PI - phi_m)/(2*n))
+        cot_3 = cot((PI + phi_p)/(2*n))
+        cot_4 = cot((PI - phi_p)/(2*n))
+        
+        def n_p(beta, n):
+            return tf.math.round((beta + PI)/(2.*n*PI))
+        
+        def n_m(beta, n):
+            return tf.math.round((beta - PI)/(2.*n*PI))
+    
+        def a_p(beta, n):
+            return 2*tf.cos((2.*n*PI*n_p(beta, n)-beta)/2.)**2
+        
+        def a_m(beta, n):
+            return 2*tf.cos((2.*n*PI*n_m(beta, n)-beta)/2.)**2
+        
+        # epsilon per la famiglia N+ ed N-, Eq.(33)
+        def eps_p(beta, n):
+            return beta - 2.*PI*n*n_p(beta, n) + PI
+        
+        def eps_m(beta, n):
+            return -beta + 2.*PI*n*n_m(beta, n) + PI
+        
+        beta_prime = beta
+
+        d_mul = - tf.cast(tf.exp(-1j*PI/4.), self._dtype) / tf.cast((2*n)*tf.sqrt(2*PI*k)*tf.math.sin(beta_prime), self._dtype)
+        
+        # [num_targets, num_sources, max_num_paths]
+        #ell = s_prime*s/(s_prime + s) * tf.math.sin(beta_prime)**2 ## CONTROLLO SE è QUESTO
+        ell = s * tf.math.sin(beta_prime)**2        
+
+        def f(x):
+            """F(x) Eq.(88) in [ITUR_P526]
+            """
+            sqrt_x = tf.sqrt(x)
+            sqrt_pi_2 = tf.cast(tf.sqrt(PI/2.), x.dtype)
+        
+            # Fresnel integral
+            arg = sqrt_x/sqrt_pi_2
+            s = tf.math.special.fresnel_sin(arg)
+            c = tf.math.special.fresnel_cos(arg)
+            f = tf.complex(s, c)
+        
+            zero = tf.cast(0, x.dtype)
+            one = tf.cast(1, x.dtype)
+            two = tf.cast(2, f.dtype)
+            factor = tf.complex(sqrt_pi_2*sqrt_x, zero)
+            factor = factor*tf.exp(tf.complex(zero, x))
+            res =  tf.complex(one, one) - two*f
+        
+            return factor* res
+        
+        def transition_boundary(eps, n, L):
+            """cot((pi+-beta)/(2n)) * F[kL a+-(beta)] per epsilon piccolo, Eq.(34)"""
+            eps_c = tf.complex(eps, tf.zeros_like(eps))
+            n_c = tf.complex(n, tf.zeros_like(n))
+            sgn_eps = tf.complex(tf.sign(eps), tf.zeros_like(eps))
+            sqrt_2pikL = tf.complex(tf.sqrt(2.*PI*k*L), tf.zeros_like(L))
+            kL_c = tf.complex(k*L, tf.zeros_like(L))
+            exp_j_pi_4 = tf.cast(tf.exp(1j*PI/4.), self._dtype)
+            bracket = sqrt_2pikL*sgn_eps - 2.*kL_c*eps_c*exp_j_pi_4
+            return n_c*bracket*exp_j_pi_4
+        
+        # [num_targets, num_sources, max_num_paths]
+        cot_1 = tf.complex(cot_1, tf.zeros_like(cot_1))
+        cot_2 = tf.complex(cot_2, tf.zeros_like(cot_2))
+        cot_3 = tf.complex(cot_3, tf.zeros_like(cot_3))
+        cot_4 = tf.complex(cot_4, tf.zeros_like(cot_4))
+        
+        # epsilon di ciascun termine rispetto alla propria boundary, Eq.(33)
+        eps_1 = eps_p(phi_m, n)   # termine 1: cot((pi+phi_m)/2n), a_p(phi_m)
+        eps_2 = eps_m(phi_m, n)   # termine 2: cot((pi-phi_m)/2n), a_m(phi_m)
+        eps_3 = eps_p(phi_p, n)   # termine 3: cot((pi+phi_p)/2n), a_p(phi_p)
+        eps_4 = eps_m(phi_p, n)   # termine 4: cot((pi-phi_p)/2n), a_m(phi_p)
+        
+        # soglia sotto la quale si usa l'approssimazione Eq.(34) al posto del
+        # calcolo diretto cot(...)*F[...] (singolare in prossimità della boundary)
+        EPS_THRESHOLD = 0.04
+        
+        t_1_direct = cot_1*f(k*ell*a_p(phi_m, n))
+        t_2_direct = cot_2*f(k*ell*a_m(phi_m, n))
+        t_3_direct = cot_3*f(k*ell*a_p(phi_p, n))
+        t_4_direct = cot_4*f(k*ell*a_m(phi_p, n))
+        
+        t_1_approx = transition_boundary(eps_1, n, ell)
+        t_2_approx = transition_boundary(eps_2, n, ell)
+        t_3_approx = transition_boundary(eps_3, n, ell)
+        t_4_approx = transition_boundary(eps_4, n, ell)
+        
+        t_1 = tf.where(tf.abs(eps_1) < EPS_THRESHOLD, t_1_approx, t_1_direct)
+        t_2 = tf.where(tf.abs(eps_2) < EPS_THRESHOLD, t_2_approx, t_2_direct)
+        t_3 = tf.where(tf.abs(eps_3) < EPS_THRESHOLD, t_3_approx, t_3_direct)
+        t_4 = tf.where(tf.abs(eps_4) < EPS_THRESHOLD, t_4_approx, t_4_direct)
+        
+        d_1 = d_mul*t_1
+        d_2 = d_mul*t_2
+        d_3 = d_mul*t_3
+        d_4 = d_mul*t_4
