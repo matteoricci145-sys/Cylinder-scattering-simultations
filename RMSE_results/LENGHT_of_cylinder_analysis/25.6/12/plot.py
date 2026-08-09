@@ -17,6 +17,7 @@ plt.legend(["Short cylinder", "Long long cylinder"])
 plt.xlabel("Distance from cylinder [lambda]")
 plt.ylabel("RMSE [dB]")
 plt.title("Comparison between differnt cylinders lengths")
+plt.savefig("plot.png")
 plt.show()
 
 

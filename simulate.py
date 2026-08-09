@@ -153,7 +153,7 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.arange(100, 110, 10e3)
+circle_radius = cylinder_radius + lamda*np.arange(200, 1200, 1e3)
 
 for circle_radius_i in circle_radius:
 
@@ -215,9 +215,6 @@ for circle_radius_i in circle_radius:
     a, tau = paths.cir()
     path_amplitudes = a[0,:,0,0,0,:,0]
     receiver_amplitudes_los = np.abs(np.sum(path_amplitudes, axis=1)) #/ lamda
-
-    plt.plot(receiver_amplitudes_los)
-    plt.show()
 
     los_line_idx = np.where(receiver_amplitudes_los <= 1e-6)[0][0], np.where(receiver_amplitudes_los <= 1e-6)[0][-1] #first and last index of the shadow region
     field_los_full = np.where(receiver_amplitudes_los <= 0.0, field_los_full, receiver_amplitudes_los) + 1e-6
