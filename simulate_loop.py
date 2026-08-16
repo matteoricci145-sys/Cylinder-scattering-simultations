@@ -63,7 +63,7 @@ print(f"lamda: {lamda}")
 #CYLINDER_RADIUS_LAMDA_list = [10, 12.8, 15.9, 19, 22.3, 25.6]
 #NU_list = [6, 8, 12, 17]
 
-CYLINDER_RADIUS_LAMDA_list = [12.8]
+CYLINDER_RADIUS_LAMDA_list = [25.6]
 NU_list = [12]
 
 for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list: 

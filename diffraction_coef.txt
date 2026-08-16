@@ -82,8 +82,11 @@
         
         # soglia sotto la quale si usa l'approssimazione Eq.(34) al posto del
         # calcolo diretto cot(...)*F[...] (singolare in prossimità della boundary)
-        EPS_THRESHOLD = 0.04
-        
+        #EPS_THRESHOLD = 1e-3*tf.math.log(s**7)
+
+        var = s_prime**2/2
+        EPS_THRESHOLD = 0.1*(1-tf.math.exp(-s**2/var))
+                
         t_1_direct = cot_1*f(k*ell*a_p(phi_m, n))
         t_2_direct = cot_2*f(k*ell*a_m(phi_m, n))
         t_3_direct = cot_3*f(k*ell*a_p(phi_p, n))
@@ -98,6 +101,44 @@
         t_2 = tf.where(tf.abs(eps_2) < EPS_THRESHOLD, t_2_approx, t_2_direct)
         t_3 = tf.where(tf.abs(eps_3) < EPS_THRESHOLD, t_3_approx, t_3_direct)
         t_4 = tf.where(tf.abs(eps_4) < EPS_THRESHOLD, t_4_approx, t_4_direct)
+
+        """
+        print("==== PHI ====")
+        print(phi)
+        print("==== s ====")
+        print(s)
+        print("==== s_prime ====")
+        print(s_prime)   
+        """
+
+        """
+        rtol = 0.001
+        atol = 1e-8 
+        
+        t_1 = tf.where(
+            tf.experimental.numpy.isclose(phi_m, -PI, rtol=rtol, atol=atol),
+            t_1_approx,
+            t_1_direct,
+        )
+        t_2 = tf.where(
+            tf.experimental.numpy.isclose(phi_m, PI, rtol=rtol, atol=atol),
+            t_2_approx,
+            t_2_direct,
+        )
+        
+        # 2nm1PI = (2*n-1)*PI
+        t_3 = tf.where(
+            tf.experimental.numpy.isclose(
+                phi_p, (2 * n - 1) * PI, rtol=rtol, atol=atol),
+            t_3_approx,
+            t_3_direct,
+        )
+        t_4 = tf.where(
+            tf.experimental.numpy.isclose(phi_p, PI, rtol=rtol, atol=atol),
+            t_4_approx,
+            t_4_direct,
+        )
+        """     
         
         d_1 = d_mul*t_1
         d_2 = d_mul*t_2

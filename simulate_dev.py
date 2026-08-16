@@ -64,7 +64,7 @@ print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
 cylinder_radius_lamda = 12.8
-nu = 12
+nu = 8
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
@@ -155,7 +155,7 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.array([100,200,1500,2e3])
+circle_radius = cylinder_radius + lamda*np.array([100,200,300,500,1500,2e3])
 
 results = []
 analytical = []
@@ -391,11 +391,11 @@ import pandas as pd
 
 df_res = pd.DataFrame(results)
 df_res.index = circle_radius
-df_res.to_csv("amplitudes_dev.csv")
+#df_res.to_csv("amplitudes_dev.csv")
 
 df_an = pd.DataFrame(analytical)
 df_an.index = circle_radius
-df_an.to_csv("analytical.csv")
+#df_an.to_csv("analytical.csv")
 
 coloumns = ["distance_in_lamda", "RMSE"]
 df = pd.DataFrame(RMSE_result)
