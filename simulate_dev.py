@@ -69,7 +69,7 @@ nu = 8
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
 
-scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/long/cylinder_{nu}/cylinder_{nu}.xml", dtype)
+scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
 #scene = load_scene(sionna.rt.scene.cylinder_12, dtype)
 
 scene.frequency = fc
@@ -155,7 +155,7 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.array([100,200,300,500,1500,2e3])
+circle_radius = cylinder_radius + lamda*np.array([100,200,300,500,1500,2e3, 5e3, 10e3, 20e3])
 
 results = []
 analytical = []
