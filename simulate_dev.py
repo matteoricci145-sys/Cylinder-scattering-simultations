@@ -64,7 +64,7 @@ print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
 cylinder_radius_lamda = 12.8
-nu = 8
+nu = 12
 
 cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
@@ -110,6 +110,9 @@ scene.rx_array = PlanarArray(num_rows=1,
 
 D = cylinder_radius
 tx_dist = 2*((D*2)**2)/lamda + D # TX must be in Frahofer zone
+#tx_dist = 1e6
+
+#tx_dist = 1e3
 
 source_point = np.array([tx_dist, 0.0, 0.0])
 
@@ -155,7 +158,9 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.array([100,200,300,500,1500,2e3, 5e3, 10e3, 20e3])
+circle_radius = cylinder_radius + lamda*np.array([0.5, 1, 2, 10, 100, 1e3, 10e3])
+#circle_radius = cylinder_radius + lamda*np.array([0.5, 1, 1.5, 2])
+
 
 results = []
 analytical = []
@@ -221,9 +226,12 @@ for circle_radius_i in circle_radius:
     a, tau = paths.cir()
     path_amplitudes = a[0,:,0,0,0,:,0]
     receiver_amplitudes_los = np.abs(np.sum(path_amplitudes, axis=1)) #/ lamda
+    
+    los_line_idx = np.where(receiver_amplitudes_los <= 1e-9)[0][0], np.where(receiver_amplitudes_los <= 1e-9)[0][-1] #first and last index of the shadow region
+    #field_los_full = np.where(receiver_amplitudes_los <= 0.0, field_los_full, receiver_amplitudes_los) + 1e-6
 
-    los_line_idx = np.where(receiver_amplitudes_los <= 1e-6)[0][0], np.where(receiver_amplitudes_los <= 1e-6)[0][-1] #first and last index of the shadow region
-    field_los_full = np.where(receiver_amplitudes_los <= 0.0, field_los_full, receiver_amplitudes_los) + 1e-6
+    field_los_full = np.where(receiver_amplitudes_los <= 0.0, field_los_full, receiver_amplitudes_los) + 1e-9
+        
     if pol == 'VV':
         field_los_full = -field_los_full
         
@@ -259,7 +267,11 @@ for circle_radius_i in circle_radius:
     #== Calculating the ANALYTIC SCATTERED FILED (Plane wave incidence)
     
     from sionna.rt.analytical_equations import cylinder_te_inc_scat_total, cylinder_tm_inc_scat_total
-    	
+
+    print(theta_arr)
+    print(cylinder_radius)
+    print(circle_radius_i)
+    
     if pol == 'HH':
     	u_inc, an_scattering, an_total = cylinder_te_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
     elif pol == 'VV':
@@ -345,7 +357,7 @@ for circle_radius_i in circle_radius:
                                 reflection = False,
                                 diffraction = True,
                                 vertex_diffraction = False,
-                                double_diffraction = False)
+                                double_diffraction = True)
     
     a, tau = paths.cir()
     #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
@@ -371,7 +383,8 @@ for circle_radius_i in circle_radius:
     
     plt.figure()
     fig, ax = plt.subplots()
-    plt.title(rf"Total field (Shadow region) {r/lamda}$\lambda$-dist, {cylinder_radius_lamda}$\lambda$-radius, {nu} NU")
+    #plt.title(rf"Total field (Shadow region) {r/lamda}$\lambda$-dist, {cylinder_radius_lamda}$\lambda$-radius, {nu} NU")
+    plt.title(rf"Total field in shadow region")
     plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_total)), label='Equation')
     plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='Sionna-RT')
 #    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
