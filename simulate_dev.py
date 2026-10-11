@@ -70,7 +70,6 @@ cylinder_radius = cylinder_radius_lamda * lamda
 print(f"cylinder_radius: {cylinder_radius}")
 
 scene = load_scene(f"./models/cylinder_{cylinder_radius_lamda}_lamda/cylinder_{nu}/cylinder_{nu}.xml", dtype)
-#scene = load_scene(sionna.rt.scene.cylinder_12, dtype)
 
 scene.frequency = fc
 scene.synthetic_array = True
@@ -110,9 +109,8 @@ scene.rx_array = PlanarArray(num_rows=1,
 
 D = cylinder_radius
 tx_dist = 2*((D*2)**2)/lamda + D # TX must be in Frahofer zone
-#tx_dist = 1e6
+tx_dist = 10e6
 
-#tx_dist = 1e3
 
 source_point = np.array([tx_dist, 0.0, 0.0])
 
@@ -158,9 +156,8 @@ RMSE_result = []
 
 #=========================================== SIMULATION =====================================================#
 
-circle_radius = cylinder_radius + lamda*np.array([0.5, 1, 2, 10, 100, 1e3, 10e3])
-#circle_radius = cylinder_radius + lamda*np.array([0.5, 1, 1.5, 2])
-
+#circle_radius = cylinder_radius + lamda*np.array([0.5, 1, 2, 10, 100, 1e3, 10e3])
+circle_radius = cylinder_radius + lamda*np.array([15])
 
 results = []
 analytical = []
@@ -384,7 +381,7 @@ for circle_radius_i in circle_radius:
     plt.figure()
     fig, ax = plt.subplots()
     #plt.title(rf"Total field (Shadow region) {r/lamda}$\lambda$-dist, {cylinder_radius_lamda}$\lambda$-radius, {nu} NU")
-    plt.title(rf"Total field in shadow region")
+    plt.title(rf"Campo totale nella zona d'ombra")
     plt.plot(57.3*theta_arr, 20*np.log10(np.abs(an_total)), label='Equation')
     plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes), label='Sionna-RT')
 #    plt.plot(57.3*theta_arr, 20*np.log10(coef*receiver_amplitudes_), 'b--', label='RT')
@@ -394,7 +391,7 @@ for circle_radius_i in circle_radius:
     plt.xlim([57.3*theta_arr[los_line_idx[0]],57.3*theta_arr[los_line_idx[1]]])
     plt.legend()
     plt.xlabel("Azimuth (deg)")
-    plt.ylabel("Amplitude (dB)")
+    plt.ylabel(f"20log(|E|) (dB V/m)")
     plt.savefig(f".//total_field_{nu}_rx_{r/lamda}.png")
 
     results.append(20*np.log10(coef*receiver_amplitudes))

@@ -56,11 +56,11 @@ sns.lineplot(
 )
 
 # Personalizzazione del grafico
-plt.title("RMSE in funzione della Distanza", fontsize=14, fontweight='bold')
-plt.xlabel("Distanza dal cilindro [lambda]", fontsize=12)
+plt.title("RMSE in funzione della distanza per diverse discretizzazioni", fontsize=14, fontweight='bold')
+plt.xlabel(f"Distanza dal cilindro [$\lambda$]", fontsize=12)
 plt.ylabel("RMSE Mediato sulle Dimensioni [dB]", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.6)
-plt.legend(title="Valori di NU")
+plt.legend(title="Numero di facce")
 
 # Mostra e salva il grafico
 plt.tight_layout()

@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 # Cylinders dimension
 D = [10, 12.8, 15.9, 19, 22.3, 25.6]
-NU = [6, 8, 12, 17]
-
+#NU = [6, 8, 12, 17]
+NU = [12]
     
 for nu in NU:
     data_frames = []
@@ -37,8 +37,9 @@ for nu in NU:
 
     
     plt.figure()
-    sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu")
-    plt.title(f"RMSE REACTIVE with {nu}-EDGES cylinder")
+    sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu",
+            cbar_kws={"label": "RMSE [dB]"})
+    plt.title(f"RMSE with {nu}-EDGES cylinder")
     plt.xlabel("Cylinder dimension [lambda]")
     plt.ylabel("Distance from cylinder [lambda]")
     plt.savefig(f"RMSE_reactive_{nu}")
@@ -48,11 +49,13 @@ for nu in NU:
     df_pivot_RMSE = df_pivot_RMSE.replace(np.inf, np.nan)
     
     plt.figure()
-    sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu")
-    plt.title(f"RMSE RADIANT with {nu}-EDGES cylinder")
-    plt.xlabel("Cylinder dimension [lambda]")
-    plt.ylabel("Distance from cylinder [lambda]")
+    sns.heatmap(df_pivot_RMSE, annot=True, cmap="YlGnBu",
+                cbar_kws={"label": "RMSE [dB]"})
+    plt.title(f"Cylinder discretized {nu}")
+    plt.xlabel(f"Radius of cylinder [$\lambda$]")
+    plt.ylabel(f"Distance from cylinder [$\lambda$]")
     plt.savefig(f"RMSE_radiant_{nu}", dpi=400, bbox_inches='tight')
+    plt.show()
     plt.close()
         
 
