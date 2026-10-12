@@ -228,6 +228,16 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
             #print(f"Shadow region: [{57.3*theta_arr[los_line_idx[0]]}° ,  {57.3*theta_arr[los_line_idx[1]]}°]")
 
+            #=================================== ANALYTIC SCATTERED FILED ===================================================
+    
+            from sionna.rt.analytical_equations import cylinder_te_inc_scat_total, cylinder_tm_inc_scat_total
+    	
+            if pol == 'HH':
+    	        u_inc, an_scattering, an_total = cylinder_te_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
+            elif pol == 'VV':
+    	        u_inc, an_scattering, an_total = cylinder_tm_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
+
+
             #== Calculating the TOTAL FIELD WITH DOUBLE-EDGE DIFFRACTION
 
             paths = scene.compute_paths(max_depth=1,
@@ -256,12 +266,12 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
             def rmse(x, y, idxs):
             	return np.sqrt(np.mean((x[idxs]-y[idxs])**2))
             rmse_ee = rmse(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) # RMSE
-            print(f"    => RMSE_forward: {rmse_ee} dB")
+            print(f"        => RMSE_forward: {rmse_ee} dB")
             
             def mae(x,y, idxs):
-                return mean(abs(x[idxs]-y[idxs]))
+                return np.mean(abs(x[idxs]-y[idxs]))
             mae_ee = mae(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) #MAE
-            print(f"    => MAE_forward: {mae_ee} dB")
+            print(f"        => MAE_forward: {mae_ee} dB")
             
             MAE_result.append({"distance_in_lamda": r/lamda, "MAE": rmse_ee}) 
         """  
@@ -290,7 +300,7 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         import pandas as pd
 
         coloumns = ["distance_in_lamda", "RMSE"]
-        df = pd.DataFrame(RMSE_result)
+        df = pd.DataFrame(MAE_result)
 
         df.to_csv(f"./temp/MAE_{nu}_{cylinder_radius_lamda}.csv", index=False)
         print("Results of MAE correctly exported")
