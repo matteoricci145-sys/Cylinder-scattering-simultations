@@ -60,15 +60,15 @@ print("\n==== SIMULATION PARAMETERS ===")
 print(f"fc: {fc}")
 print(f"lamda: {lamda}")
 
-CYLINDER_RADIUS_LAMDA_list = [10, 12.8, 15.9, 19, 22.3, 25.6]
+CYLINDER_RADIUS_LAMDA_list = [12.8]
 NU_list = [6, 8, 12, 17]
 
 for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list: 
 
-    print(f"=== CYLINDER RADIUS {cylinder_radius_lamda} ===")
+    print(f"===== CYLINDER RADIUS {cylinder_radius_lamda} ====")
     for nu in NU_list:
 
-        print(f"NU: {nu}")
+        print(f"=== NU: {nu} ==")
 
         cylinder_radius = cylinder_radius_lamda * lamda
 
@@ -107,8 +107,8 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
 
         D = cylinder_radius
-        #tx_dist = 2*((2*D)**2)/lamda + D
-        tx_dist = 10e6
+        tx_dist = 2*((2*D)**2)/lamda + D
+        #tx_dist = 10e6
         source_point = np.array([tx_dist, 0.0, 0.0])
 
         tx = Transmitter(name="tx", position=source_point, dtype=dtype)
@@ -149,11 +149,11 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         #print(f"S = {S_wav} * lambda")
         #print(f"E^2/R = {E2divR_wav} * lambda")
 
-        RMSE_result = []
+        MAE_result = []
 
         #=========================================== SIMULATION =====================================================#
 
-        circle_radius = cylinder_radius + lamda*np.logspace(-1, 3, 50)
+        circle_radius = cylinder_radius + lamda*np.logspace(-1, 2, 50)
                 
         for circle_radius_i in circle_radius:
 
@@ -228,61 +228,6 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
 
             #print(f"Shadow region: [{57.3*theta_arr[los_line_idx[0]]}° ,  {57.3*theta_arr[los_line_idx[1]]}°]")
 
-            """
-            #== Calculating the SCATTERED FIELD WITHOUT DOUBLE-EDGE DIFFRACTION
-            paths = scene.compute_paths(max_depth=1,
-                                        method="exhaustive",
-                                        num_samples=1e6,
-                                        los = True,
-                                        reflection = True,
-                                        diffraction = True,
-                                        vertex_diffraction = False,
-                                        double_diffraction = False,)
-
-            paths.normalize_delays = False
-            a, tau = paths.cir()
-            #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
-
-            nans_bool = tf.math.is_nan(tf.math.real(a)) 
-            a = tf.where(nans_bool, tf.zeros_like(a), a)
-
-            path_amplitudes = a[0,:,0,0,0,:,0]
-            tmp1 = np.sum(path_amplitudes, axis=1) + field_los_full2
-            receiver_amplitudes_ = np.abs(tmp1) / lamda 
-
-            """
-            #== Calculating the ANALYTIC SCATTERED FILED (Plane wave incidence)
-            
-            from sionna.rt.analytical_equations import cylinder_te_inc_scat_total, cylinder_tm_inc_scat_total
-            	
-            if pol == 'HH':
-            	u_inc, an_scattering, an_total = cylinder_te_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
-            elif pol == 'VV':
-            	u_inc, an_scattering, an_total = cylinder_tm_inc_scat_total(theta_arr, cylinder_radius, circle_radius_i, 2*np.pi / lamda, terms=512)
-
-            #========================================= TOTAL FILED =================================================#
-
-            #== Calculating the TOTAL FIELD WITHOUT DOUBLE-EDGE DIFFRACTION
-            
-            paths = scene.compute_paths(max_depth=1,
-                                        method="exhaustive",
-                                        num_samples=1e6,
-                                        los = True,
-                                        reflection = True,
-                                        diffraction = True,
-                                        vertex_diffraction = False,
-                                        double_diffraction = False,)
-            
-            a, tau = paths.cir()
-            #a.shape   # [batch_size, num_rx, num_rx_ant, num_tx, num_tx_ant, max_num_paths, num_time_steps]
-            
-            nans_bool = tf.math.is_nan(tf.math.real(a)) 
-            a = tf.where(nans_bool, tf.zeros_like(a), a)
-            
-            path_amplitudes = a[0,:,0,0,0,:,0]
-            tmp1 = np.sum(path_amplitudes, axis=1)
-            receiver_amplitudes_ = np.abs(tmp1) / lamda
-
             #== Calculating the TOTAL FIELD WITH DOUBLE-EDGE DIFFRACTION
 
             paths = scene.compute_paths(max_depth=1,
@@ -311,9 +256,14 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
             def rmse(x, y, idxs):
             	return np.sqrt(np.mean((x[idxs]-y[idxs])**2))
             rmse_ee = rmse(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) # RMSE
-            print(f"=> RMSE_forward: {rmse_ee} dB")
-
-            RMSE_result.append({"distance_in_lamda": r/lamda, "RMSE": rmse_ee}) 
+            print(f"    => RMSE_forward: {rmse_ee} dB")
+            
+            def mae(x,y, idxs):
+                return mean(abs(x[idxs]-y[idxs]))
+            mae_ee = mae(20*np.log10(np.abs(an_total)), 20*np.log10(coef*receiver_amplitudes), forw_idxs) #MAE
+            print(f"    => MAE_forward: {mae_ee} dB")
+            
+            MAE_result.append({"distance_in_lamda": r/lamda, "MAE": rmse_ee}) 
         """  
             plt.figure()
             fig, ax = plt.subplots()
@@ -342,5 +292,5 @@ for cylinder_radius_lamda in CYLINDER_RADIUS_LAMDA_list:
         coloumns = ["distance_in_lamda", "RMSE"]
         df = pd.DataFrame(RMSE_result)
 
-        df.to_csv(f"./RMSE_results/RESULTS_{nu}_{cylinder_radius_lamda}.csv", index=False)
-        print("Results of RMSE correctly exported")
+        df.to_csv(f"./temp/MAE_{nu}_{cylinder_radius_lamda}.csv", index=False)
+        print("Results of MAE correctly exported")
